@@ -1,48 +1,26 @@
-package com.b10r.redisCache.entity;
+package com.b10r.redisCache.Dto;
 
-import java.io.Serializable;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "USER_DETAILS")
-public class UserDetails implements Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class UserDetailsDto {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	
-	@Column(name = "USERNAME")
+	private String id;
+
 	private String userName;
-	
-	@Column(name="AGE")
+
 	private String age;
-	
-	@Column(name="EMAIL")
+
 	private String email;
-	
-	
-	@Column(name = "PH_NUMBER")
+
 	private String phNumber;
-	
-	@Column(name="ADDRESS")
+
 	private String address;
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -86,6 +64,6 @@ public class UserDetails implements Serializable {
 		this.address = address;
 	}
 	
-
+	
 
 }

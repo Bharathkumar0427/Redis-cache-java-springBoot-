@@ -2,7 +2,7 @@ package com.b10r.redisCache.constant;
 
 public enum ResponseStatus {
 	
-	SUCCESS("SUCCESS");
+	SUCCESS("SUCCESS"),FAILED("FAILED");
 	
 	ResponseStatus(String str){
 		this.value=str;
