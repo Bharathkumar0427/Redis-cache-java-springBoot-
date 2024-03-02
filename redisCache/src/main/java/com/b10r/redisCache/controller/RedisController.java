@@ -1,5 +1,7 @@
 package com.b10r.redisCache.controller;
 
+
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +26,7 @@ import com.b10r.redisCache.serviceImpl.RedisServiceImpl;
 @RestController
 @RequestMapping("/redis")
 public class RedisController {
-
+	
 	private static final Logger log = org.slf4j.LoggerFactory.getLogger(RedisServiceImpl.class);
 
 	@Autowired
@@ -46,9 +48,17 @@ public class RedisController {
 	@PutMapping("/updateUserDetails")
 	ResponseEntity<ResponseDto> updateUserDetails(@RequestBody UserDetailsDto userDetailsDto) throws Exception {
 
-		ResponseDto responseDto = null;
+		ResponseDto responseDto = new ResponseDto();
 		try {
-			responseDto = redisService.updateUser(userDetailsDto);
+			UserDetails userDetails=redisService.updateUser(userDetailsDto);
+			if(userDetails !=null) {
+				responseDto.setResponseStatus(ResponseStatus.SUCCESS.getValue());
+				responseDto.setObj1(userDetails);
+			}else{
+				
+				responseDto.setResponseStatus(ResponseStatus.FAILED.getValue());
+			}
+			
 
 		} catch (Exception e) {
 			log.error("EXCEPTION IN updateUserDetails", e);
@@ -63,7 +73,7 @@ public class RedisController {
 
 		ResponseDto responseDto = null;
 		try {
-			redisService.deleteuser(id);
+		 redisService.deleteuser(id);
 		} catch (Exception e) {
 			log.error("EXCEPTION IN deleteUserDetails", e);
 		}
@@ -74,10 +84,19 @@ public class RedisController {
 	@GetMapping("/getUserById/{id}")
 	ResponseEntity<ResponseDto> getUserByid(@PathVariable(name = "id") String id) {
 
-		ResponseDto responseDto = null;
+		ResponseDto responseDto = new ResponseDto();
 		try {
-			responseDto = redisService.getUser(id);
-			
+			UserDetails ud = redisService.getUser(id);
+			if (ud != null) {
+
+				responseDto.setObj1(ud);
+				responseDto.setResponseStatus(ResponseStatus.SUCCESS.getValue());
+
+			} else {
+
+				responseDto.setResponseStatus(ResponseStatus.FAILED.getValue());
+			}
+
 		} catch (Exception e) {
 			log.error("EXCEPTION IN getUserByid", e);
 		}

@@ -8,12 +8,10 @@ public interface RedisService {
 	
 	ResponseDto createUser(UserDetailsDto userDetailsDto);
 	
-	ResponseDto updateUser(UserDetailsDto userDetailsDto);
+	UserDetails updateUser(UserDetailsDto userDetailsDto);
 	void deleteuser(String userId);
 	
-	ResponseDto getUser(String userId);
-	
-	UserDetailsDto convertUserDetailsToDto(UserDetails userDetails);
+	UserDetails getUser(String userId);
 	
 	
 

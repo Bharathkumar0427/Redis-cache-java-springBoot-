@@ -1,16 +1,10 @@
 package com.b10r.redisCache.Dto;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class ResponseDto implements Serializable{
+public class ResponseDto {
 	
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3402106694848243905L;
-
 	private String responseStatus;
 	
 	private List<Object> obj;

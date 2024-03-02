@@ -2,7 +2,7 @@ package com.b10r.redisCache.constant;
 
 public enum ResponseStatus {
 	
-	SUCCESS("SUCCESS"),FAILED("FAILED"),UNKNOWN_ID("CANNOT FIND A ENTRY FOR THE ID");
+	SUCCESS("SUCCESS"),FAILED("FAILED");
 	
 	ResponseStatus(String str){
 		this.value=str;
