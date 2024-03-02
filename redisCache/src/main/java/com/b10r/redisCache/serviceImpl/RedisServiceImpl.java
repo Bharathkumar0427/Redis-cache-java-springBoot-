@@ -2,6 +2,7 @@ package com.b10r.redisCache.serviceImpl;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -38,7 +39,8 @@ public class RedisServiceImpl implements RedisService {
 				userDetails.setPhNumber(!userDetailsDto.getPhNumber().isEmpty() ? userDetailsDto.getPhNumber() : null);
 				userDetails.setUserName(!userDetailsDto.getUserName().isEmpty() ? userDetailsDto.getUserName() : null);
 				UserDetails userDetails1 = userDetailsRepo.save(userDetails);
-				if (userDetails != null) {
+				boolean userdetailsCheck=ObjectUtils.isNotEmpty(userDetails1);
+				if (userdetailsCheck) {
 					responseDto.setResponseStatus(ResponseStatus.SUCCESS.getValue());
 					responseDto.setObj1(userDetails1);
 				}
@@ -53,12 +55,13 @@ public class RedisServiceImpl implements RedisService {
 		return responseDto;
 	}
 
-	@CachePut(value = "UserDetails", key = "#userDetailsDto.getId")
+	@CachePut(value = "ResponseDto", key = "#userDetailsDto.getId")
 	@Override
-	public UserDetails updateUser(UserDetailsDto userDetailsDto) {
+	public ResponseDto updateUser(UserDetailsDto userDetailsDto) {
 		log.info("INTO updateUser");
+		ResponseDto responseDto = new ResponseDto();
 		try {
-			if (!userDetailsDto.getId().isEmpty()) {
+			if (ObjectUtils.isNotEmpty(userDetailsDto.getId())) {
 				Optional<UserDetails> userDetails = userDetailsRepo.findById(Long.valueOf(userDetailsDto.getId()));
 				if (userDetails.isPresent()) {
 					UserDetails userDetails1 = userDetails.get();
@@ -72,51 +75,79 @@ public class RedisServiceImpl implements RedisService {
 							: userDetails1.getPhNumber());
 					userDetails1.setUserName(!userDetailsDto.getUserName().isEmpty() ? userDetailsDto.getUserName()
 							: userDetails1.getUserName());
-					UserDetails Details = userDetailsRepo.save(userDetails1);
-					return Details;
+
+					
+					responseDto.setObj1(convertUserDetailsToDto(userDetailsRepo.save(userDetails1)));
+					responseDto.setResponseStatus(ResponseStatus.SUCCESS.getValue());
+
+					return responseDto;
 				} else {
-					return null;
+					responseDto.setResponseStatus(ResponseStatus.UNKNOWN_ID.getValue());
+					return responseDto;
 				}
 			}
 		} catch (Exception e) {
 			log.error("EXCEPTION IN updateUser", e);
+			responseDto.setResponseStatus(ResponseStatus.FAILED.getValue());
 		}
-		return null;
+		return responseDto;
 	}
 
 	@Override
-	@CacheEvict(value = "UserDetails", allEntries = true)
+	@CacheEvict(value = "UserDetails", key = "#userId")
 	public void deleteuser(String userId) throws IllegalArgumentException, OptimisticLockingFailureException {
 		log.info("INTO deleteuser");
 		try {
 			if (!userId.isEmpty()) {
 				userDetailsRepo.deleteById(Long.valueOf(userId));
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.error("EXCEPTION IN deleteuser", e);
 		}
 	}
 
 	@Override
-	@Cacheable(value = "UserDetails", key = "#userId")
-	public UserDetails getUser(String userId) {
+	@Cacheable(value = "ResponseDto", key = "#userId")
+	public ResponseDto getUser(String userId) {
 		log.info("INTO getUser by iD ");
+		ResponseDto responseDto = new ResponseDto();
 		try {
-			if (!userId.isEmpty()) {
+			if (ObjectUtils.isNotEmpty(userId)) {
 				Optional<UserDetails> userDetails = userDetailsRepo.findById(Long.valueOf(userId));
 				if (userDetails.isPresent()) {
-					return userDetails.get();
+
+					responseDto.setObj1(userDetails.get());
 				} else {
-					return null;
+					responseDto.setResponseStatus(ResponseStatus.UNKNOWN_ID.getValue());
 				}
 
 			} else {
-				return null;
+				responseDto.setResponseStatus(ResponseStatus.UNKNOWN_ID.getValue());
 			}
 
 		} catch (Exception e) {
 			log.error("EXCEPTION IN getUser", e);
+		}
+		return responseDto;
+	}
+
+	@Override
+	public UserDetailsDto convertUserDetailsToDto(UserDetails userDetails) {
+
+		try {
+			if (ObjectUtils.isNotEmpty(userDetails)) {
+				UserDetailsDto userdto = new UserDetailsDto();
+				userdto.setAddress(!userDetails.getAddress().isEmpty() ? userDetails.getAddress() : null);
+				userdto.setAge(!userDetails.getAge().isEmpty() ? userDetails.getAge() : null);
+				userdto.setEmail(!userDetails.getEmail().isEmpty() ? userDetails.getEmail() : null);
+				userdto.setId(userDetails.getId() > 0 ? String.valueOf(userDetails.getId()) : null);
+				userdto.setPhNumber(!userDetails.getPhNumber().isEmpty() ? userDetails.getPhNumber() : null);
+				userdto.setUserName(!userDetails.getUserName().isEmpty() ? userDetails.getUserName() : null);
+				return userdto;
+			}
+
+		} catch (Exception e) {
+			log.error("EXCEPTION IN convertUserDetailsToDto", e);
 		}
 		return null;
 	}

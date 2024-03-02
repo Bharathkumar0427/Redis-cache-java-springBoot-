@@ -38,6 +38,7 @@ public class UserDetails implements Serializable {
 	@Column(name="ADDRESS")
 	private String address;
 
+
 	public long getId() {
 		return id;
 	}

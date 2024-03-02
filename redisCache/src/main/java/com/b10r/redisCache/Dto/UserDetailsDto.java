@@ -1,8 +1,13 @@
 package com.b10r.redisCache.Dto;
 
+import java.io.Serializable;
 
+public class UserDetailsDto implements Serializable{
 
-public class UserDetailsDto {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String id;
 
